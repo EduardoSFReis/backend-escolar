@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Boletim por Turma - Sistema Acadêmico</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/frontend/css/global.css">
+  <link rel="stylesheet" href="/frontend/css/dashboard.css">
+  <link rel="stylesheet" href="/frontend/css/tables.css">
+  <link rel="stylesheet" href="/frontend/css/forms.css">
+  <style>
+    .boletim-toolbar { display: flex; gap: 1rem; align-items: end; flex-wrap: wrap; padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); }
+    .boletim-toolbar .form-group { margin: 0; min-width: 240px; }
+    .boletim-section { margin-bottom: 2rem; }
+    .boletim-section h4 { margin: 0 0 .5rem; padding: .75rem 1rem; background: var(--bg-secondary, #f5f6fa); border-radius: 6px; display: flex; justify-content: space-between; align-items: center; }
+    .boletim-section h4 small { font-weight: 400; color: var(--text-secondary); }
+    .badge-aprov { background: #d1fae5; color: #065f46; }
+    .badge-reprov { background: #fee2e2; color: #991b1b; }
+    .badge-curso { background: #e0e7ff; color: #3730a3; }
+    .badge-tranc { background: #f3f4f6; color: #374151; }
+    .boletim-empty { padding: 3rem; text-align: center; color: var(--text-secondary); }
+    @media print {
+      .sidebar, .header, .boletim-toolbar, .btn-print { display: none !important; }
+      .main-content { margin-left: 0 !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <aside class="sidebar">
+      <div class="sidebar-header"><div class="sidebar-brand"><div class="sidebar-logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div><div><div class="sidebar-title">Acadêmico</div><div class="sidebar-subtitle">Sistema Escolar</div></div></div></div>
+      <nav class="sidebar-nav">
+        <div class="nav-section"><div class="nav-section-title">Menu Principal</div><ul class="nav-menu"><li class="nav-item"><a href="/frontend/index.html" class="nav-link">Dashboard</a></li></ul></div>
+        <div class="nav-section"><div class="nav-section-title">Cadastros</div><ul class="nav-menu">
+          <li class="nav-item"><a href="/frontend/pages/alunos.html" class="nav-link">Alunos</a></li>
+          <li class="nav-item"><a href="/frontend/pages/professores.html" class="nav-link">Professores</a></li>
+          <li class="nav-item"><a href="/frontend/pages/disciplinas.html" class="nav-link">Disciplinas</a></li>
+          <li class="nav-item"><a href="/frontend/pages/turmas.html" class="nav-link">Turmas</a></li>
+        </ul></div>
+        <div class="nav-section"><div class="nav-section-title">Acadêmico</div><ul class="nav-menu">
+          <li class="nav-item"><a href="/frontend/pages/matriculas.html" class="nav-link">Matrículas</a></li>
+          <li class="nav-item"><a href="/frontend/pages/ofertas.html" class="nav-link">Ofertas</a></li>
+          <li class="nav-item"><a href="/frontend/pages/cursamentos.html" class="nav-link">Cursamentos</a></li>
+        </ul></div>
+        <div class="nav-section"><div class="nav-section-title">Avaliações</div><ul class="nav-menu">
+          <li class="nav-item"><a href="/frontend/pages/avaliacoes.html" class="nav-link">Avaliações</a></li>
+          <li class="nav-item"><a href="/frontend/pages/notas.html" class="nav-link">Notas</a></li>
+          <li class="nav-item"><a href="/frontend/pages/boletim.html" class="nav-link active">Boletim</a></li>
+        </ul></div>
+      </nav>
+      <div class="sidebar-footer"><div class="sidebar-user"><div class="user-avatar">AD</div><div class="user-info"><div class="user-name">Administrador</div><div class="user-role">Admin</div></div><button class="btn-logout" data-action="logout" title="Sair">⏻</button></div></div>
+    </aside>
+    <div class="sidebar-overlay"></div>
+    <main class="main-content">
+      <header class="header"><div class="header-left"><button class="btn-menu-toggle">☰</button><div><h1 class="page-title">Boletim por Turma</h1><div class="breadcrumb"><a href="/frontend/index.html">Dashboard</a><span class="breadcrumb-separator">/</span><span>Boletim</span></div></div></div></header>
+      <div class="page-content">
+        <div class="table-container">
+          <div class="boletim-toolbar">
+            <div class="form-group">
+              <label class="form-label" for="filter-turma">Turma</label>
+              <select class="form-input" id="filter-turma"><option value="">Carregando...</option></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="filter-ano">Ano Letivo</label>
+              <input type="number" class="form-input" id="filter-ano" min="2000" placeholder="(todos)">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="filter-semestre">Semestre</label>
+              <select class="form-input" id="filter-semestre">
+                <option value="">Todos</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+              </select>
+            </div>
+            <button class="btn btn-secondary btn-print" onclick="window.print()">Imprimir</button>
+          </div>
+          <div id="boletim-container" style="padding:1.5rem">
+            <div class="boletim-empty">Selecione uma turma para ver o boletim.</div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal lançar notas -->
+  <div class="modal-overlay" id="modal-notas">
+    <div class="modal" style="max-width:640px">
+      <div class="modal-header">
+        <h3 class="modal-title">Lançar Notas — <span id="modal-notas-aluno"></span></h3>
+        <button type="button" class="modal-close" id="btn-cancelar-notas">×</button>
+      </div>
+      <form id="form-lancar-notas">
+        <div class="modal-body">
+          <p style="color:var(--text-secondary);margin-bottom:1rem">
+            Informe as notas das avaliações abaixo. Deixe em branco para não alterar.
+            A média final é recalculada automaticamente pelo banco.
+          </p>
+          <div id="modal-notas-avals"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="btn-cancelar-notas-2" onclick="document.getElementById('btn-cancelar-notas').click()">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="btn-salvar-notas">Salvar notas</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/frontend/js/api.js"></script>
+  <script src="/frontend/js/auth.js"></script>
+  <script src="/frontend/js/ui.js"></script>
+  <script src="/frontend/js/boletim.js"></script>
+</body>
+</html>
